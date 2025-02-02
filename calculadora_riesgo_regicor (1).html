@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de Riesgo Cardiovascular (REGICOR) Prevención Primaria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .result {
+            background-color: #ffe6cc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Calculadora de Riesgo Cardiovascular (REGICOR) Prevención Primaria</h2>
+        <p>Ingrese los siguientes datos:</p>
+        <form id="regicorForm">
+            <label>Edad: <input type="number" id="edad" min="35" max="74" required></label><br>
+            <label>Sexo:
+                <select id="sexo">
+                    <option value="hombre">Hombre</option>
+                    <option value="mujer">Mujer</option>
+                </select>
+            </label><br>
+            <label>Presión Arterial Sistólica (mmHg): <input type="number" id="pas" required></label><br>
+            <label>Presión Arterial Diastólica (mmHg): <input type="number" id="pad" required></label><br>
+            <label>Colesterol Total (mg/dL): <input type="number" id="colesterolTotal" required></label><br>
+            <label>Colesterol HDL (mg/dL): <input type="number" id="colesterolHDL" required></label><br>
+            <label>¿Fuma?
+                <select id="fuma">
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select>
+            </label><br>
+            <label>¿Tiene Diabetes?
+                <select id="diabetes">
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select>
+            </label><br>
+            <button type="button" onclick="calcularRiesgo()">Calcular</button>
+        </form>
+        
+        <div class="result">
+            <p><strong>Riesgo Coronario a 10 años:</strong> <span id="riesgo">-</span>%</p>
+            <p><strong>Categoría de Riesgo:</strong> <span id="categoria">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        function calcularRiesgo() {
+            let edad = parseInt(document.getElementById('edad').value);
+            let pas = parseInt(document.getElementById('pas').value);
+            let pad = parseInt(document.getElementById('pad').value);
+            let colesterolTotal = parseInt(document.getElementById('colesterolTotal').value);
+            let colesterolHDL = parseInt(document.getElementById('colesterolHDL').value);
+            let fuma = document.getElementById('fuma').value === 'si';
+            let diabetes = document.getElementById('diabetes').value === 'si';
+            let sexo = document.getElementById('sexo').value;
+            
+            let riesgoBase = 5; // Valor inicial, se modificará según los datos ingresados
+            
+            // Ajustes por edad
+            if (edad >= 35 && edad <= 44) riesgoBase += 1;
+            else if (edad >= 45 && edad <= 54) riesgoBase += 3;
+            else if (edad >= 55 && edad <= 64) riesgoBase += 6;
+            else if (edad >= 65) riesgoBase += 8;
+            
+            // Ajustes por presión arterial sistólica
+            if (pas >= 120 && pas < 140) riesgoBase += 1;
+            else if (pas >= 140 && pas < 160) riesgoBase += 2;
+            else if (pas >= 160) riesgoBase += 4;
+            
+            // Ajustes por colesterol total
+            if (colesterolTotal >= 200 && colesterolTotal < 240) riesgoBase += 2;
+            else if (colesterolTotal >= 240) riesgoBase += 4;
+            
+            // Ajuste por colesterol HDL
+            if (colesterolHDL < 35) riesgoBase *= 1.5;
+            else if (colesterolHDL > 59) riesgoBase *= 0.5;
+            
+            // Ajustes por tabaquismo y diabetes
+            if (fuma) riesgoBase += 2;
+            if (diabetes) riesgoBase += 3;
+            
+            // Ajuste por sexo (hombres suelen tener mayor riesgo)
+            if (sexo === "hombre") riesgoBase += 1;
+            
+            // Determinar categoría de riesgo
+            let categoria = "";
+            if (riesgoBase < 5) {
+                categoria = "Riesgo bajo";
+            } else if (riesgoBase < 10) {
+                categoria = "Riesgo moderado";
+            } else if (riesgoBase < 15) {
+                categoria = "Riesgo alto";
+            } else {
+                categoria = "Riesgo muy alto";
+            }
+            
+            document.getElementById('riesgo').textContent = riesgoBase.toFixed(1);
+            document.getElementById('categoria').textContent = categoria;
+        }
+    </script>
+</body>
+</html>
